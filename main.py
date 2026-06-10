@@ -281,7 +281,7 @@ class VentanaPrincipal(wx.Frame):
             1,
             wx.EXPAND
         )
-holaa
+
         self.contenido.Layout()
 
 
