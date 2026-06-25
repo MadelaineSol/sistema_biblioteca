@@ -3,6 +3,8 @@ import wx
 
 
 
+
+
 class PanelInicio(wx.Panel):
 
     def __init__(self, parent):
@@ -61,8 +63,12 @@ class PanelLibros(wx.Panel):
         sizer.Add(wx.StaticText(self, label="ISBN"))
         sizer.Add(wx.TextCtrl(self), 0, wx.EXPAND | wx.ALL, 5)
 
-        sizer.Add(wx.Button(self, label="Guardar Libro"),
+        sizer.Add(wx.Button(self, label="+ Nuevo Libro"),
                   0, wx.ALL, 10)
+        
+
+
+        
 
         tabla = wx.ListCtrl(self, style=wx.LC_REPORT)
 
@@ -160,12 +166,37 @@ class PanelDevoluciones(wx.Panel):
         sizer.Add(
             wx.StaticText(
                 self,
-                label="Módulo en desarrollo"
+                label="Módulo en desarrollo",
+              
             ),
             0,
             wx.ALL,
             20
+
+
+
         )
+
+
+
+        # sizer.Add(
+        #     wx.StaticText(
+        #         self,
+        #         label="Módulo en desarrollo22",
+              
+        #     ),
+        #     0,
+        #     wx.ALL,
+        #     40
+
+
+
+        # )
+
+
+
+
+        
 
         self.SetSizer(sizer)
 
