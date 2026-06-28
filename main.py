@@ -1,5 +1,9 @@
 import wx
 
+import funciones
+
+libro = funciones.Libro()
+
 
 
 
@@ -63,9 +67,15 @@ class PanelLibros(wx.Panel):
         sizer.Add(wx.StaticText(self, label="ISBN"))
         sizer.Add(wx.TextCtrl(self), 0, wx.EXPAND | wx.ALL, 5)
 
-        sizer.Add(wx.Button(self, label="+ Nuevo Libro"),
-                  0, wx.ALL, 10)
+        btn_nuevo_libro = wx.Button(self, label="+ Nuevo Libro")
+        sizer.Add(btn_nuevo_libro, 0, wx.ALL, 10)
+
+        # sizer.Add(wx.Button(self, label="+ Nuevo Libro"),
+        #           0, wx.ALL, 10)
+        btn_nuevo_libro.Bind(wx.EVT_BUTTON,libro.cargar_nuevo_libro)
+    
         
+
 
 
         
