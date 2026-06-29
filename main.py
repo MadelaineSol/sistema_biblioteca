@@ -59,6 +59,7 @@ class PanelLibros(wx.Panel):
         titulo = wx.StaticText(self, label="Gestión de Libros")
         titulo.SetFont(wx.Font(14, wx.DEFAULT, wx.NORMAL, wx.BOLD))
 
+
         sizer.Add(titulo, 0, wx.ALL, 10)
 
         sizer.Add(wx.StaticText(self, label="Título"))
