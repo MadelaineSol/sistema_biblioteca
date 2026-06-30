@@ -65,7 +65,7 @@ class PanelLibros(wx.Panel):
         sizer.Add(wx.StaticText(self, label="Título"))
         sizer.Add(wx.TextCtrl(self), 0, wx.EXPAND | wx.ALL, 5)
 
-        sizer.Add(wx.StaticText(self, label="ISBN"))
+        sizer.Add(wx.StaticText(self, label="Codigo"))
         sizer.Add(wx.TextCtrl(self), 0, wx.EXPAND | wx.ALL, 5)
 
         btn_nuevo_libro = wx.Button(self, label="+ Nuevo Libro")

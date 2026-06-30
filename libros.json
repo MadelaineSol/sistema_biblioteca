@@ -1,0 +1,18 @@
+[
+    {
+        "titulo": "el principito",
+        "codigo": "LIB0001",
+        "autor": "autor"
+    },
+    {
+        "titulo": "misteriosa buenos aires",
+        "codigo": "LIB0002",
+        "autor": "autor"
+    },
+    {
+        "titulo": "cien años de soledad",
+        "codigo": "LIB0003",
+        "autor": "gabriel garcia marquez",
+        "genero": "fantastico"
+    }
+]
