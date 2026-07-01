@@ -2,7 +2,15 @@ import wx
 
 import funciones
 
+import os
+
+import json
+
 libro = funciones.Libro()
+
+personas=funciones.Personas()
+
+prestamos=funciones.Prestamos()
 
 
 
@@ -46,6 +54,8 @@ class PanelInicio(wx.Panel):
 
         self.SetSizer(sizer)
 
+        
+
 
 
 
@@ -62,11 +72,7 @@ class PanelLibros(wx.Panel):
 
         sizer.Add(titulo, 0, wx.ALL, 10)
 
-        sizer.Add(wx.StaticText(self, label="Título"))
-        sizer.Add(wx.TextCtrl(self), 0, wx.EXPAND | wx.ALL, 5)
-
-        sizer.Add(wx.StaticText(self, label="Codigo"))
-        sizer.Add(wx.TextCtrl(self), 0, wx.EXPAND | wx.ALL, 5)
+        
 
         btn_nuevo_libro = wx.Button(self, label="+ Nuevo Libro")
         sizer.Add(btn_nuevo_libro, 0, wx.ALL, 10)
@@ -81,15 +87,40 @@ class PanelLibros(wx.Panel):
 
         
 
-        tabla = wx.ListCtrl(self, style=wx.LC_REPORT)
+        self.tabla = wx.ListCtrl(self, style=wx.LC_REPORT)
 
-        tabla.InsertColumn(0, "ID", width=80)
-        tabla.InsertColumn(1, "Título", width=300)
-        tabla.InsertColumn(2, "ISBN", width=200)
+        self.tabla.InsertColumn(0, "Código", width=100)
+        self.tabla.InsertColumn(1, "Título", width=250)
+        self.tabla.InsertColumn(2, "Autor", width=200)
+        self.tabla.InsertColumn(3, "Género", width=150)
 
-        sizer.Add(tabla, 1, wx.EXPAND | wx.ALL, 10)
-
+        sizer.Add(self.tabla, 1, wx.EXPAND | wx.ALL, 10)
         self.SetSizer(sizer)
+
+        self.cargar_tabla()
+
+    def cargar_tabla(self):
+
+            self.tabla.DeleteAllItems()
+
+            if not os.path.exists("libros.json"):
+                return
+
+            with open("libros.json", "r", encoding="utf-8") as archivo:
+                libros = json.load(archivo)
+
+            for libro in libros:
+
+                fila = self.tabla.InsertItem(
+                self.tabla.GetItemCount(),
+                libro["codigo"] 
+              
+            )
+
+                self.tabla.SetItem(fila, 1, libro["titulo"])
+                self.tabla.SetItem(fila, 2, libro["autor"])
+                self.tabla.SetItem(fila, 3, libro["genero"])
+           
 
 
 
@@ -106,24 +137,48 @@ class PanelPersonas(wx.Panel):
 
         sizer.Add(titulo, 0, wx.ALL, 10)
 
-        sizer.Add(wx.StaticText(self, label="Nombre"))
-        sizer.Add(wx.TextCtrl(self), 0, wx.EXPAND | wx.ALL, 5)
 
-        sizer.Add(wx.StaticText(self, label="DNI"))
-        sizer.Add(wx.TextCtrl(self), 0, wx.EXPAND | wx.ALL, 5)
 
-        sizer.Add(wx.Button(self, label="Guardar Persona"),
-                  0, wx.ALL, 10)
+       
 
-        tabla = wx.ListCtrl(self, style=wx.LC_REPORT)
+        btn_nueva_persona = wx.Button(self, label="+ Nueva persona")
+        sizer.Add(btn_nueva_persona, 0, wx.ALL, 10)
 
-        tabla.InsertColumn(0, "ID", width=80)
-        tabla.InsertColumn(1, "Nombre", width=250)
-        tabla.InsertColumn(2, "DNI", width=150)
+     
+        btn_nueva_persona.Bind(wx.EVT_BUTTON,personas.cargar_nueva_persona)
 
-        sizer.Add(tabla, 1, wx.EXPAND | wx.ALL, 10)
+        self.tabla = wx.ListCtrl(self, style=wx.LC_REPORT)
 
+        self.tabla.InsertColumn(0, "Dni", width=80)
+        self.tabla.InsertColumn(1, "Nombre", width=250)
+        self.tabla.InsertColumn(2, "Apellido", width=150)
+
+        sizer.Add(self.tabla, 1, wx.EXPAND | wx.ALL, 10)
         self.SetSizer(sizer)
+
+        self.cargar_tabla()
+
+    def cargar_tabla(self):
+
+        self.tabla.DeleteAllItems()
+
+        if not os.path.exists("personas.json"):
+            return
+
+        with open("personas.json", "r", encoding="utf-8") as archivo:
+            personas = json.load(archivo)
+
+        for persona in personas:
+
+            fila = self.tabla.InsertItem(
+            self.tabla.GetItemCount(),
+            persona["dni"]
+        )
+
+            self.tabla.SetItem(fila, 1, persona["nombre"])
+            self.tabla.SetItem(fila, 2, persona["apellido"])
+               
+           
 
 
 
@@ -134,26 +189,32 @@ class PanelPrestamos(wx.Panel):
 
         sizer = wx.BoxSizer(wx.VERTICAL)
 
-        titulo = wx.StaticText(self, label="Nuevo Préstamo")
+        titulo = wx.StaticText(self, label="Prestamos activos")
         titulo.SetFont(wx.Font(14, wx.DEFAULT, wx.NORMAL, wx.BOLD))
 
         sizer.Add(titulo, 0, wx.ALL, 10)
 
-        sizer.Add(wx.StaticText(self, label="Persona"))
-        sizer.Add(wx.TextCtrl(self), 0, wx.EXPAND | wx.ALL, 5)
 
-        sizer.Add(wx.StaticText(self, label="Libro"))
-        sizer.Add(wx.TextCtrl(self), 0, wx.EXPAND | wx.ALL, 5)
+        btn_nuevo_prestamo = wx.Button(self, label="+ Nuevo prestamo")
+        sizer.Add(btn_nuevo_prestamo, 0, wx.ALL, 10)
 
-        sizer.Add(wx.Button(self, label="Registrar Préstamo"),
-                  0, wx.ALL, 10)
+     
+        btn_nuevo_prestamo.Bind(wx.EVT_BUTTON,prestamos.cargar_nuevo_prestamo)
+
+
+
+
+
+       
+
+      
 
         tabla = wx.ListCtrl(self, style=wx.LC_REPORT)
 
-        tabla.InsertColumn(0, "ID", width=80)
+        tabla.InsertColumn(0, "Libro", width=80)
         tabla.InsertColumn(1, "Persona", width=250)
-        tabla.InsertColumn(2, "Libro", width=250)
-        tabla.InsertColumn(3, "Fecha", width=150)
+  
+        tabla.InsertColumn(2, "Fecha", width=150)
 
         sizer.Add(tabla, 1, wx.EXPAND | wx.ALL, 10)
 
@@ -190,20 +251,7 @@ class PanelDevoluciones(wx.Panel):
 
 
 
-        # sizer.Add(
-        #     wx.StaticText(
-        #         self,
-        #         label="Módulo en desarrollo22",
-              
-        #     ),
-        #     0,
-        #     wx.ALL,
-        #     40
-
-
-
-        # )
-
+       
 
 
 
@@ -214,28 +262,7 @@ class PanelDevoluciones(wx.Panel):
 
 
 
-class PanelReportes(wx.Panel):
 
-    def __init__(self, parent):
-        super().__init__(parent)
-
-        sizer = wx.BoxSizer(wx.VERTICAL)
-
-        titulo = wx.StaticText(self, label="Reportes")
-        titulo.SetFont(wx.Font(14, wx.DEFAULT, wx.NORMAL, wx.BOLD))
-
-        sizer.Add(titulo, 0, wx.ALL, 15)
-
-        sizer.Add(wx.Button(self, label="Libros Disponibles"),
-                  0, wx.ALL, 5)
-
-        sizer.Add(wx.Button(self, label="Libros Prestados"),
-                  0, wx.ALL, 5)
-
-        sizer.Add(wx.Button(self, label="Historial de Préstamos"),
-                  0, wx.ALL, 5)
-
-        self.SetSizer(sizer)
 
 
 
@@ -277,7 +304,7 @@ class VentanaPrincipal(wx.Frame):
             ("Personas", PanelPersonas),
             ("Préstamos", PanelPrestamos),
             ("Devoluciones", PanelDevoluciones),
-            ("Reportes", PanelReportes)
+      
         ]
 
         for texto, panel_clase in botones:
