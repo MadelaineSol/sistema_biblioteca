@@ -4,51 +4,55 @@
         "codigo": "LIB0001",
         "autor": "autor",
         "genero": "fantastico",
-        "estado": "disponible"
-
-
+        "estado": "Disponible"
     },
     {
         "titulo": "misteriosa buenos aires",
         "codigo": "LIB0002",
         "autor": "autor",
         "genero": "fantastico",
-        "estado": "disponible"
+        "estado": "Disponible"
     },
     {
         "titulo": "cien años de soledad",
         "codigo": "LIB0003",
         "autor": "gabriel garcia marquez",
         "genero": "fantastico",
-        "estado": "disponible"
+        "estado": "Disponible"
     },
     {
         "titulo": "misteriosa buenos aires",
         "codigo": "LIB0004",
         "autor": "alguien",
         "genero": "fantastico",
-        "estado": "disponible"
+        "estado": "Disponible"
     },
     {
         "titulo": "test de carga",
         "codigo": "LIB0005",
         "autor": "test",
         "genero": "test",
-        "estado": "disponible"
+        "estado": "Prestado"
     },
     {
         "titulo": "test 2",
         "codigo": "LIB0006",
         "autor": "test test",
         "genero": "genero de prueba",
-        "estado": "disponible"
+        "estado": "Prestado"
     },
     {
         "titulo": "test de carga 3",
         "codigo": "LIB0007",
         "autor": "test test test",
         "genero": "test",
-        "estado": "prestado"
+        "estado": "Prestado"
+    },
+    {
+        "titulo": "aventuras de la selva",
+        "codigo": "LIB0008",
+        "autor": "quiroga",
+        "genero": "fantastico",
+        "estado": "Prestado"
     }
-    
 ]

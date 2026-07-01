@@ -1,0 +1,20 @@
+[
+    {
+        "libro": "LIB0001 - el principito",
+        "persona": "38948310 - gonzalo - boto",
+        "fecha": "01/07/2026",
+        "estado": "Devuelto"
+    },
+    {
+        "libro": "LIB0001 - el principito",
+        "persona": "58805618 - lucia - boto",
+        "fecha": "01/07/2026",
+        "estado": "Devuelto"
+    },
+    {
+        "libro": "LIB0008 - aventuras de la selva",
+        "persona": "5910132 - maria - basualdo",
+        "fecha": "01/07/2026",
+        "estado": "Activo"
+    }
+]

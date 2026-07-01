@@ -41,14 +41,14 @@ class PanelInicio(wx.Panel):
         sizer.AddStretchSpacer()
         sizer.Add(titulo, 0, wx.ALIGN_CENTER | wx.ALL, 10)
 
-        sizer.Add(wx.StaticText(self, label="Libros registrados: 0"),
-                  0, wx.ALIGN_CENTER | wx.ALL, 5)
+        # sizer.Add(wx.StaticText(self, label="Libros registrados: 0"),
+        #           0, wx.ALIGN_CENTER | wx.ALL, 5)
 
-        sizer.Add(wx.StaticText(self, label="Personas registradas: 0"),
-                  0, wx.ALIGN_CENTER | wx.ALL, 5)
+        # sizer.Add(wx.StaticText(self, label="Personas registradas: 0"),
+        #           0, wx.ALIGN_CENTER | wx.ALL, 5)
 
-        sizer.Add(wx.StaticText(self, label="Préstamos activos: 0"),
-                  0, wx.ALIGN_CENTER | wx.ALL, 5)
+        # sizer.Add(wx.StaticText(self, label="Préstamos activos: 0"),
+        #           0, wx.ALIGN_CENTER | wx.ALL, 5)
 
         sizer.AddStretchSpacer()
 
@@ -209,55 +209,85 @@ class PanelPrestamos(wx.Panel):
 
       
 
-        tabla = wx.ListCtrl(self, style=wx.LC_REPORT)
+        self.tabla = wx.ListCtrl(self, style=wx.LC_REPORT)
 
-        tabla.InsertColumn(0, "Libro", width=80)
-        tabla.InsertColumn(1, "Persona", width=250)
+        self.tabla.InsertColumn(0, "Libro", width=250)
+        self.tabla.InsertColumn(1, "Persona", width=250)
   
-        tabla.InsertColumn(2, "Fecha", width=150)
+        self.tabla.InsertColumn(2, "Fecha", width=150)
 
-        sizer.Add(tabla, 1, wx.EXPAND | wx.ALL, 10)
+        sizer.Add(self.tabla, 1, wx.EXPAND | wx.ALL, 10)
+        self.btn_devolver = wx.Button(self, label="Devolver libro")
 
-        self.SetSizer(sizer)
-
-
-
-
-class PanelDevoluciones(wx.Panel):
-
-    def __init__(self, parent):
-        super().__init__(parent)
-
-        sizer = wx.BoxSizer(wx.VERTICAL)
-
-        titulo = wx.StaticText(self, label="Devoluciones")
-        titulo.SetFont(wx.Font(14, wx.DEFAULT, wx.NORMAL, wx.BOLD))
-
-        sizer.Add(titulo, 0, wx.ALL, 15)
-
-        sizer.Add(
-            wx.StaticText(
-                self,
-                label="Módulo en desarrollo",
-              
-            ),
-            0,
-            wx.ALL,
-            20
-
-
-
+        self.btn_devolver.Bind(
+        wx.EVT_BUTTON,
+        self.devolver_libro
         )
 
-
-
-       
-
-
-
-        
+        sizer.Add(self.btn_devolver, 0, wx.ALL | wx.CENTER, 10)
 
         self.SetSizer(sizer)
+
+
+        self.cargar_tabla()
+
+    def cargar_tabla(self):
+
+        self.tabla.DeleteAllItems()
+
+        if not os.path.exists("prestamos.json"):
+            return
+
+        with open("prestamos.json", "r", encoding="utf-8") as archivo:
+            prestamos = json.load(archivo)
+
+        for prestamo in prestamos:
+            if prestamo["estado"] == "Activo":
+                fila = self.tabla.InsertItem(
+                    self.tabla.GetItemCount(),
+                    prestamo["libro"]
+                )
+                self.tabla.SetItem(fila, 1, prestamo["persona"])
+                self.tabla.SetItem(fila, 2, prestamo["fecha"])
+    def devolver_libro(self, event):
+
+        fila = self.tabla.GetFirstSelected()
+
+        if fila == -1:
+            wx.MessageBox(
+            "Seleccione un préstamo.",
+            "Aviso",
+            wx.OK | wx.ICON_WARNING
+        )
+            return
+
+        libro = self.tabla.GetItemText(fila, 0)
+        persona = self.tabla.GetItemText(fila, 1)
+     
+
+        respuesta = wx.MessageBox(
+        f"¿Desea devolver '{libro}'?",
+        "Confirmar devolución",
+        wx.YES_NO | wx.ICON_QUESTION
+        )
+
+        if respuesta != wx.YES:
+            return
+
+        prestamos.cambiar_estado_prestamo(libro, persona)
+        prestamos.cambiar_estado_libro_devuelto(libro)
+
+        wx.MessageBox(
+        "Libro devuelto correctamente.",
+        "Éxito",
+        wx.OK | wx.ICON_INFORMATION
+        )
+
+        self.cargar_tabla()
+               
+
+
+
 
 
 
@@ -303,7 +333,7 @@ class VentanaPrincipal(wx.Frame):
             ("Libros", PanelLibros),
             ("Personas", PanelPersonas),
             ("Préstamos", PanelPrestamos),
-            ("Devoluciones", PanelDevoluciones),
+            
       
         ]
 

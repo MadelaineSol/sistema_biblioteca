@@ -1,6 +1,7 @@
 import wx
 import json
 import os
+import wx.adv
 # import random
 # import string
 
@@ -136,7 +137,8 @@ class Libro:
         "titulo": self.txt_titulo.GetValue(),
         "codigo": self.txt_codigo.GetValue(),
         "autor": self.txt_autor.GetValue(),
-        "genero": self.txt_genero.GetValue()
+        "genero": self.txt_genero.GetValue(),
+        "estado": "Disponible"
     }
 
      self.guardar_json(libro)
@@ -375,19 +377,31 @@ class Prestamos ():
 
 
 
+        # sizer.Add(wx.StaticText(panel, label="Libro"))
         sizer.Add(wx.StaticText(panel, label="Libro"))
-        self.txt_dni = wx.TextCtrl(panel)
-        sizer.Add(self.txt_dni, 0, wx.EXPAND | wx.ALL, 5)
+        self.choice_libros = wx.Choice(panel)
+        sizer.Add(self.choice_libros, 0, wx.EXPAND | wx.ALL, 5)
+
+        self.cargar_libros_disponibles()
+        # self.txt_dni = wx.TextCtrl(panel)
+        # sizer.Add(self.txt_dni, 0, wx.EXPAND | wx.ALL, 5)
+
+        # sizer.Add(wx.StaticText(panel, label="Persona"))
+
+        # self.txt_nombre = wx.TextCtrl(panel)
+
+        # sizer.Add(self.txt_nombre, 0, wx.EXPAND | wx.ALL, 5)
+
 
         sizer.Add(wx.StaticText(panel, label="Persona"))
+        self.choice_personas = wx.Choice(panel)
+        sizer.Add(self.choice_personas, 0, wx.EXPAND | wx.ALL, 5)
 
-        self.txt_nombre = wx.TextCtrl(panel)
-
-        sizer.Add(self.txt_nombre, 0, wx.EXPAND | wx.ALL, 5)
+        self.cargar_personas()
 
         sizer.Add(wx.StaticText(panel, label="Fecha"))
-        self.txt_apellido = wx.TextCtrl(panel)
-        sizer.Add(self.txt_apellido, 0, wx.EXPAND | wx.ALL, 5)
+        self.fecha = wx.adv.DatePickerCtrl(panel,style=wx.adv.DP_DROPDOWN | wx.adv.DP_SHOWCENTURY)
+        sizer.Add(self.fecha, 0, wx.EXPAND | wx.ALL, 5)
 
         
 
@@ -415,13 +429,55 @@ class Prestamos ():
         
         return frame
     
+    def cargar_libros_disponibles(self):
 
+        self.choice_libros.Clear()
+
+        if not os.path.exists("libros.json"):
+            return
+
+        with open("libros.json", "r", encoding="utf-8") as archivo:
+            libros = json.load(archivo)
+
+        for libro in libros:
+            if libro["estado"] == "Disponible":
+                self.choice_libros.Append(
+                    f'{libro["codigo"]} - {libro["titulo"]}'
+            )
+                
+
+
+
+
+    def cargar_personas(self):
+
+        self.choice_personas.Clear()
+
+        if not os.path.exists("personas.json"):
+            return
+
+        with open("personas.json", "r", encoding="utf-8") as archivo:
+            personas = json.load(archivo)
+
+        for persona in personas:
+            
+                self.choice_personas.Append(
+                    f'{persona["dni"]} - {persona["nombre"]} - {persona["apellido"]}'
+            )
 
     def Click(self, event):
 
-        libro = self.txt_libro.GetValue()
-        persona = self.txt_persona.GetValue()
-        fecha = self.txt_fecha.GetValue()
+       
+
+        libro = self.choice_libros.GetSelection()
+        persona = self.choice_personas.GetSelection()
+        fecha = self.fecha.GetValue()
+
+
+        print("libro:", libro)
+        print("persona:", persona)
+        print("fecha:", fecha)
+       
         
 
    
@@ -464,15 +520,89 @@ class Prestamos ():
 
     def guardar_prestamo(self):
 
-     prestamos = {
-        "libro": self.txt_libro.GetValue(),
-        "persona": self.txt_persona.GetValue(),
-        "fecha": self.txt_fecha.GetValue()
-        
+        libro = self.choice_libros.GetString(
+        self.choice_libros.GetSelection()
+    )
+
+        persona = self.choice_personas.GetString(
+        self.choice_personas.GetSelection()
+    )
+
+        fecha = self.fecha.GetValue().Format("%d/%m/%Y")
+
+        prestamo = {
+        "libro": libro,
+        "persona": persona,
+        "fecha": fecha,
+        "estado": "Activo"
     }
+        
 
-     self.guardar_json(prestamos)
+        codigo = self.choice_libros.GetString(
+        self.choice_libros.GetSelection()
+        ).split(" - ")[0]
 
+        
+        self.cambiar_estado_libro(codigo, "Prestado")
+
+        self.guardar_json(prestamo)
+
+
+    def cambiar_estado_libro(self, codigo, estado):
+
+        with open("libros.json", "r", encoding="utf-8") as archivo:
+            libros = json.load(archivo)
+
+        for libro in libros:
+            if libro["codigo"] == codigo:
+                libro["estado"] = estado
+           
+
+        with open("libros.json", "w", encoding="utf-8") as archivo:
+            json.dump(libros, archivo, indent=4, ensure_ascii=False)
+
+
+
+    def cambiar_estado_libro_devuelto(self, libro):
+
+        codigo = libro.split(" - ")[0]
+
+        with open("libros.json", "r", encoding="utf-8") as archivo:
+            libros = json.load(archivo)
+
+        for libro_json in libros:
+            if libro_json["codigo"] == codigo:
+                libro_json["estado"] = "Disponible"
+          
+
+        with open("libros.json", "w", encoding="utf-8") as archivo:
+            json.dump(libros, archivo, indent=4, ensure_ascii=False)
+
+
+
+    def cambiar_estado_prestamo(self, libro, persona):
+
+        with open("prestamos.json", "r", encoding="utf-8") as archivo:
+            prestamos = json.load(archivo)
+
+        for prestamo in prestamos:
+            if (prestamo["libro"] == libro
+                and prestamo["persona"] == persona
+                and prestamo["estado"] == "Activo"):
+                prestamo["estado"] = "Devuelto"
+            
+
+        with open("prestamos.json", "w", encoding="utf-8") as archivo:
+            json.dump(prestamos, archivo, indent=4, ensure_ascii=False)
+
+
+
+   
+
+        
+    
+
+        
 
 
     def cerrar_ventana(self, event):
